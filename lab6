@@ -1,26 +1,34 @@
-import java.awt.Color;
-import java.awt.EventQueue;
-import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+package ggez;
 
+import java.awt.EventQueue;
+import javax.swing.JFrame;
+import javax.swing.JTextArea;
+import javax.swing.JComboBox;
+import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JRadioButton;
 import javax.swing.JTextField;
+import java.awt.Button;
+import java.awt.Label;
+import javax.swing.JCheckBox;
+import javax.swing.JRadioButton;
+import java.awt.event.ActionListener;
+import java.sql.*;
+import java.awt.event.ActionEvent;
+import javax.swing.JLabel;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JToggleButton;
+import javax.swing.JButton;
+import java.awt.Color;
+import javax.swing.SwingConstants;
+import java.awt.SystemColor;
+import javax.swing.UIManager;
+import java.awt.Font;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
-public class GGEZWP {
-
+public class GGWP {
 
 	private JFrame frame;
 	private JTextField textField_Search;
@@ -32,7 +40,8 @@ public class GGEZWP {
 	public static Connection conn;
 	public static Statement stment;
 	public ResultSet rs;
-
+	int Rowsize = 0;
+	String qry = null;
 	/**
 	 * Launch the application.
 	 */
@@ -40,7 +49,7 @@ public class GGEZWP {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					GGEZWP window = new GGEZWP();
+					GGWP window = new GGWP();
 					window.frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -52,7 +61,7 @@ public class GGEZWP {
 	/**
 	 * Create the application.
 	 */
-	public GGEZWP() {
+	public GGWP() {
 		initialize();
 	}
 
@@ -61,7 +70,7 @@ public class GGEZWP {
 	 */
 	private void initialize() {
 		try {
-			conn = DriverManager.getConnection("jdbc:ucanaccess://C:/Users/CSITGIS/Desktop/Database12.accdb", "", "");
+			conn = DriverManager.getConnection("jdbc:ucanaccess://C:\\Users\\CSICTGIS\\Desktop\\Database12.accdb", "", "");
 			stment = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE);
 		} catch (SQLException e2) {
 			e2.printStackTrace();
@@ -78,6 +87,14 @@ public class GGEZWP {
 		frame.getContentPane().add(comboBox);
 		
 		textField_Search = new JTextField();
+		textField_Search.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent k) {
+				if (k.getKeyCode() == 10) {
+					btnSearch.doClick();
+					}
+			}
+		});
 		textField_Search.setBounds(126, 11, 116, 20);
 		frame.getContentPane().add(textField_Search);
 		textField_Search.setColumns(10);
@@ -86,6 +103,10 @@ public class GGEZWP {
 		label.setFont(new Font("Tahoma", Font.BOLD, 12));
 		label.setBounds(49, 67, 84, 14);
 		frame.getContentPane().add(label);
+		
+		JLabel label_7 = new JLabel("0/0");
+		label_7.setBounds(166, 286, 46, 14);
+		frame.getContentPane().add(label_7);
 		
 		JLabel label_1 = new JLabel("\u0E0A\u0E37\u0E48\u0E2D");
 		label_1.setFont(new Font("Tahoma", Font.BOLD, 12));
@@ -137,6 +158,11 @@ public class GGEZWP {
 		radioButton_1.setFont(new Font("Tahoma", Font.BOLD, 12));
 		radioButton_1.setBounds(209, 195, 109, 23);
 		frame.getContentPane().add(radioButton_1);
+		radioButton_1.setActionCommand("Special");
+		radioButton.setActionCommand("Normal");
+			final ButtonGroup group = new ButtonGroup();
+			group.add(radioButton);
+			group.add(radioButton_1);
 		
 		JLabel label_3 = new JLabel("\u0E2A\u0E48\u0E27\u0E19\u0E2A\u0E39\u0E07");
 		label_3.setFont(new Font("Tahoma", Font.BOLD, 12));
@@ -169,59 +195,361 @@ public class GGEZWP {
 		frame.getContentPane().add(label_6);
 		
 		JButton btnNewButton_1 = new JButton("|<");
+		btnNewButton_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					if (rs.first()) {
+						tf_ID.setText(rs.getString("STD_ID"));
+						textField_Name.setText(rs.getString("Name"));
+						textField_Sur.setText(rs.getString("Surname"));
+						checkBox.setSelected(rs.getBoolean("Temple"));
+						if (rs.getString("Gender").equals("Male")){
+							comboBox_sex.setSelectedIndex(0);
+						} 
+						else{
+							comboBox_sex.setSelectedIndex(1);
+						}
+						if (rs.getString("Section").equals("Normal")){
+							radioButton.setSelected(true);
+						} 
+						else {
+							radioButton_1.setSelected(true);
+						}
+						tf_ID.setText(rs.getString("STD_ID"));
+						textField_Name.setText(rs.getString("Name"));
+						textField_Sur.setText(rs.getString("Surname"));
+						checkBox.setSelected(rs.getBoolean("Temple"));
+						if (rs.getString("Gender").equals("Male")){
+							comboBox_sex.setSelectedIndex(0);
+						} 
+						else {
+							comboBox_sex.setSelectedIndex(1);
+						}
+						if (rs.getString("Section").equals("Normal"))
+						{
+							radioButton.setSelected(true);
+						} 
+						else {
+							radioButton_1.setSelected(true);
+						}
+						textField_H.setText(rs.getString("Height"));
+						textField_W.setText(rs.getString("Weight"));
+						}
+					label_7.setText(Integer.toString(rs.getRow()) + "/" + Integer.toString(Rowsize));
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
 		btnNewButton_1.setBounds(40, 274, 46, 38);
 		frame.getContentPane().add(btnNewButton_1);
 		
 		JButton btnNewButton_2 = new JButton("<");
 		btnNewButton_2.setBounds(96, 274, 46, 38);
 		frame.getContentPane().add(btnNewButton_2);
-		
-		JLabel label_7 = new JLabel("0/0");
-		label_7.setBounds(166, 286, 46, 14);
-		frame.getContentPane().add(label_7);
+		btnNewButton_2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					if (rs.previous()) {
+						tf_ID.setText(rs.getString("STD_ID"));
+						textField_Name.setText(rs.getString("Name"));
+						textField_Sur.setText(rs.getString("Surname"));
+						checkBox.setSelected(rs.getBoolean("Temple"));
+						if (rs.getString("Gender").equals("Male")){
+							comboBox_sex.setSelectedIndex(0);
+						} 
+						else{
+							comboBox_sex.setSelectedIndex(1);
+						}
+						if (rs.getString("Section").equals("Normal")){
+							radioButton.setSelected(true);
+						} 
+						else {
+							radioButton_1.setSelected(true);
+						}
+						tf_ID.setText(rs.getString("STD_ID"));
+						textField_Name.setText(rs.getString("Name"));
+						textField_Sur.setText(rs.getString("Surname"));
+						checkBox.setSelected(rs.getBoolean("Temple"));
+						if (rs.getString("Gender").equals("Male")){
+							comboBox_sex.setSelectedIndex(0);
+						} 
+						else {
+							comboBox_sex.setSelectedIndex(1);
+						}
+						if (rs.getString("Section").equals("Normal"))
+						{
+							radioButton.setSelected(true);
+						} 
+						else {
+							radioButton_1.setSelected(true);
+						}
+						textField_H.setText(rs.getString("Height"));
+						textField_W.setText(rs.getString("Weight"));
+						}
+					else {
+						if (rs.first()) {
+							tf_ID.setText(rs.getString("STD_ID"));
+							textField_Name.setText(rs.getString("Name"));
+							textField_Sur.setText(rs.getString("Surname"));
+							checkBox.setSelected(rs.getBoolean("Temple"));
+							if (rs.getString("Gender").equals("Male")){
+								comboBox_sex.setSelectedIndex(0);
+							} 
+							else{
+								comboBox_sex.setSelectedIndex(1);
+							}
+							if (rs.getString("Section").equals("Normal")){
+								radioButton.setSelected(true);
+							} 
+							else {
+								radioButton_1.setSelected(true);
+							}
+							tf_ID.setText(rs.getString("STD_ID"));
+							textField_Name.setText(rs.getString("Name"));
+							textField_Sur.setText(rs.getString("Surname"));
+							checkBox.setSelected(rs.getBoolean("Temple"));
+							if (rs.getString("Gender").equals("Male")){
+								comboBox_sex.setSelectedIndex(0);
+							} 
+							else {
+								comboBox_sex.setSelectedIndex(1);
+							}
+							if (rs.getString("Section").equals("Normal"))
+							{
+								radioButton.setSelected(true);
+							} 
+							else {
+								radioButton_1.setSelected(true);
+							}
+							textField_H.setText(rs.getString("Height"));
+							textField_W.setText(rs.getString("Weight"));
+							}
+					}
+					label_7.setText(Integer.toString(rs.getRow()) + "/" + Integer.toString(Rowsize));
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
 		
 		JButton btnNewButton_3 = new JButton(">");
+		btnNewButton_3.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+					try {
+						if (rs.next()) {
+							tf_ID.setText(rs.getString("STD_ID"));
+							textField_Name.setText(rs.getString("Name"));
+							textField_Sur.setText(rs.getString("Surname"));
+							checkBox.setSelected(rs.getBoolean("Temple"));
+							if (rs.getString("Gender").equals("Male")){
+								comboBox_sex.setSelectedIndex(0);
+							} 
+							else{
+								comboBox_sex.setSelectedIndex(1);
+							}
+							if (rs.getString("Section").equals("Normal")){
+								radioButton.setSelected(true);
+							} 
+							else {
+								radioButton_1.setSelected(true);
+							}
+							tf_ID.setText(rs.getString("STD_ID"));
+							textField_Name.setText(rs.getString("Name"));
+							textField_Sur.setText(rs.getString("Surname"));
+							checkBox.setSelected(rs.getBoolean("Temple"));
+							if (rs.getString("Gender").equals("Male")){
+								comboBox_sex.setSelectedIndex(0);
+							} 
+							else {
+								comboBox_sex.setSelectedIndex(1);
+							}
+							if (rs.getString("Section").equals("Normal"))
+							{
+								radioButton.setSelected(true);
+							} 
+							else {
+								radioButton_1.setSelected(true);
+							}
+							textField_H.setText(rs.getString("Height"));
+							textField_W.setText(rs.getString("Weight"));
+							}
+						else {
+							if (rs.last()) {
+								tf_ID.setText(rs.getString("STD_ID"));
+								textField_Name.setText(rs.getString("Name"));
+								textField_Sur.setText(rs.getString("Surname"));
+								checkBox.setSelected(rs.getBoolean("Temple"));
+								if (rs.getString("Gender").equals("Male")){
+									comboBox_sex.setSelectedIndex(0);
+								} 
+								else{
+									comboBox_sex.setSelectedIndex(1);
+								}
+								if (rs.getString("Section").equals("Normal")){
+									radioButton.setSelected(true);
+								} 
+								else {
+									radioButton_1.setSelected(true);
+								}
+								tf_ID.setText(rs.getString("STD_ID"));
+								textField_Name.setText(rs.getString("Name"));
+								textField_Sur.setText(rs.getString("Surname"));
+								checkBox.setSelected(rs.getBoolean("Temple"));
+								if (rs.getString("Gender").equals("Male")){
+									comboBox_sex.setSelectedIndex(0);
+								} 
+								else {
+									comboBox_sex.setSelectedIndex(1);
+								}
+								if (rs.getString("Section").equals("Normal"))
+								{
+									radioButton.setSelected(true);
+								} 
+								else {
+									radioButton_1.setSelected(true);
+								}
+								textField_H.setText(rs.getString("Height"));
+								textField_W.setText(rs.getString("Weight"));
+								}
+						}
+					    
+						label_7.setText(Integer.toString(rs.getRow()) + "/" + Integer.toString(Rowsize));
+					} catch (SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}
+		});
 		btnNewButton_3.setBounds(204, 275, 48, 36);
 		frame.getContentPane().add(btnNewButton_3);
 		
 		JButton button = new JButton(">|");
+		button.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					if (rs.last()) {
+						tf_ID.setText(rs.getString("STD_ID"));
+						textField_Name.setText(rs.getString("Name"));
+						textField_Sur.setText(rs.getString("Surname"));
+						checkBox.setSelected(rs.getBoolean("Temple"));
+						if (rs.getString("Gender").equals("Male")){
+							comboBox_sex.setSelectedIndex(0);
+						} 
+						else{
+							comboBox_sex.setSelectedIndex(1);
+						}
+						if (rs.getString("Section").equals("Normal")){
+							radioButton.setSelected(true);
+						} 
+						else {
+							radioButton_1.setSelected(true);
+						}
+						tf_ID.setText(rs.getString("STD_ID"));
+						textField_Name.setText(rs.getString("Name"));
+						textField_Sur.setText(rs.getString("Surname"));
+						checkBox.setSelected(rs.getBoolean("Temple"));
+						if (rs.getString("Gender").equals("Male")){
+							comboBox_sex.setSelectedIndex(0);
+						} 
+						else {
+							comboBox_sex.setSelectedIndex(1);
+						}
+						if (rs.getString("Section").equals("Normal"))
+						{
+							radioButton.setSelected(true);
+						} 
+						else {
+							radioButton_1.setSelected(true);
+						}
+						textField_H.setText(rs.getString("Height"));
+						textField_W.setText(rs.getString("Weight"));
+						}					
+					label_7.setText(Integer.toString(rs.getRow()) + "/" + Integer.toString(Rowsize));
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
 		button.setBounds(263, 275, 48, 36);
 		frame.getContentPane().add(button);
 		
 		JButton btnAdd = new JButton("");
-		btnAdd.setIcon(new ImageIcon("E:\\Programming\\Java\\Lap6\\aaaaaaaaa.png"));
+		btnAdd.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Connection conn;
+				try {
+					conn = DriverManager.getConnection
+							("jdbc:ucanaccess://C:\\\\Users\\\\CSICTGIS\\\\Desktop\\\\Database1.mdb");
+					Statement stment = conn.createStatement();
+					String qry =  "INSERT INTO values student(Std_id,Name,Surname,Gender,Temple,Section,Height,Weight) values ('"+
+					tf_ID.getText() + "','" + textField_Name.getText() + "','" + textField_Sur.getText() + "', '"+
+							checkBox.getSelectionItem().toString()+ "','" + checkBox.isSelected() + "','" +
+					comboBox_sex.getSelection().Actioncommand() + "',"+ textField_H.getText()+ "," + textField_W.getText() + ")";
+					ResultSet rs =  stment.executeQuery(qry);
+				if (rs.next()){
+					tf_ID.setText("รหัส :"+rs.getString("STD_ID")+" ชื่อ"+
+					rs.getString("Name")+" "+rs.getString("Surname"));
+					} 
+
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}					
+			}			
+		});
+		btnAdd.setIcon(new ImageIcon("C:\\Users\\CSICTGIS\\Desktop\\aaaaaaaaa.png"));
 		btnAdd.setBounds(378, 67, 65, 57);
 		frame.getContentPane().add(btnAdd);
 		
 		JButton btnEdit = new JButton("");
-		btnEdit.setIcon(new ImageIcon("E:\\Programming\\Java\\Lap6\\eeeeeeee.png"));
+		btnEdit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+			}
+		});
+		btnEdit.setIcon(new ImageIcon("C:\\Users\\CSICTGIS\\Desktop\\eeeeeeee.png"));
 		btnEdit.setBounds(378, 135, 65, 57);
 		frame.getContentPane().add(btnEdit);
 		
 		JButton btnSubt = new JButton("");
-		btnSubt.setIcon(new ImageIcon("E:\\Programming\\Java\\Lap6\\sssss.png"));
+		btnSubt.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+			}
+		});
+		btnSubt.setIcon(new ImageIcon("C:\\Users\\CSICTGIS\\Desktop\\sssss.png"));
 		btnSubt.setBounds(378, 201, 65, 57);
 		frame.getContentPane().add(btnSubt);
 		
 		JButton buttonNO = new JButton("");
-		buttonNO.setIcon(new ImageIcon("E:\\Programming\\Java\\Lap6\\xxxxx.png"));
+		buttonNO.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+			}
+		});
+		buttonNO.setIcon(new ImageIcon("C:\\Users\\CSICTGIS\\Desktop\\xxxxx.png"));
 		buttonNO.setBounds(214, 323, 65, 63);
 		frame.getContentPane().add(buttonNO);
 		
 		JButton btnOK = new JButton("");
-		btnOK.setIcon(new ImageIcon("E:\\Programming\\Java\\Lap6\\kkkkk.png"));
+		btnOK.setIcon(new ImageIcon("C:\\Users\\CSICTGIS\\Desktop\\kkkkk.png"));
 		btnOK.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				
 			}
 		});
 		
 		JButton btnSearch = new JButton("");
 		btnSearch.setForeground(Color.BLACK);
-		btnSearch.setIcon(new ImageIcon("E:\\Programming\\Java\\Lap6\\weqweqweqe.png"));
+		btnSearch.setIcon(new ImageIcon("C:\\Users\\CSICTGIS\\Desktop\\weqweqweqe.png"));
 		btnSearch.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
-					conn = DriverManager.getConnection("jdbc:ucanaccess://E:\\Programming\\Java\\Lap6\\Database1.mdb");
+					conn = DriverManager.getConnection("jdbc:ucanaccess://C:\\Users\\CSICTGIS\\Desktop\\Database1.mdb");
 					String qry = null;
 					switch (comboBox.getSelectedIndex()) {
 					case 0:
@@ -243,7 +571,6 @@ public class GGEZWP {
 					stment = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
 							ResultSet.CONCUR_UPDATABLE);
 					rs = stment.executeQuery(qry);
-					 int Rowsize = 0;
 					if (rs.last()) {
 						  Rowsize = rs.getRow();
 				          rs.beforeFirst(); 
@@ -280,6 +607,14 @@ public class GGEZWP {
 		btnSearch.setBounds(265, 12, 46, 44);
 		frame.getContentPane().add(btnSearch);
 		
+		btnNewButton_1.setEnabled(false);
+		btnNewButton_2.setEnabled(false);
+		btnNewButton_3.setEnabled(false);
+		button.setEnabled(false);
+		btnAdd.setEnabled(false);
+		btnEdit.setEnabled(false);
+		btnSubt.setEnabled(false);
+
 		
 		btnOK.setBounds(110, 324, 65, 63);
 		frame.getContentPane().add(btnOK);
