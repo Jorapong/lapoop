@@ -1,0 +1,621 @@
+package ggez;
+
+import java.awt.EventQueue;
+import javax.swing.JFrame;
+import javax.swing.JTextArea;
+import javax.swing.JComboBox;
+import javax.swing.ButtonGroup;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.ImageIcon;
+import javax.swing.JTextField;
+import java.awt.Button;
+import java.awt.Label;
+import javax.swing.JCheckBox;
+import javax.swing.JRadioButton;
+import java.awt.event.ActionListener;
+import java.sql.*;
+import java.awt.event.ActionEvent;
+import javax.swing.JLabel;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JToggleButton;
+import javax.swing.JButton;
+import java.awt.Color;
+import javax.swing.SwingConstants;
+import java.awt.SystemColor;
+import javax.swing.UIManager;
+import java.awt.Font;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+
+public class GGWP {
+
+	private JFrame frame;
+	private JTextField textField_Search;
+	private JTextField tf_ID;
+	private JTextField textField_Name;
+	private JTextField textField_Sur;
+	private JTextField textField_H;
+	private JTextField textField_W;
+	public static Connection conn;
+	public static Statement stment;
+	public ResultSet rs;
+	int Rowsize = 0;
+	String qry = null;
+	String Sec;
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					GGWP window = new GGWP();
+					window.frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+	public GGWP() {
+		initialize();
+	}
+	private void initialize() {
+		try {
+			conn = DriverManager.getConnection("jdbc:ucanaccess://‪E:\\Programming\\Java\\Lap6\\Database1.mdb");
+			stment = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE);
+		} catch (SQLException e2) {
+			e2.printStackTrace();
+		}
+		frame = new JFrame();
+		frame.setBounds(100, 100, 502, 433);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.getContentPane().setLayout(null);
+		
+		JComboBox comboBox = new JComboBox();
+		comboBox.setFont(new Font("Tahoma", Font.BOLD, 12));
+		comboBox.setModel(new DefaultComboBoxModel(new String[] {"\u0E17\u0E31\u0E49\u0E07\u0E2B\u0E21\u0E14", "\u0E23\u0E2B\u0E31\u0E2A\u0E19\u0E31\u0E01\u0E28\u0E36\u0E01\u0E29\u0E32", "\u0E0A\u0E37\u0E48\u0E2D\u0E08\u0E23\u0E34\u0E07", "\u0E19\u0E32\u0E21\u0E2A\u0E01\u0E38\u0E25", "\u0E40\u0E1E\u0E28", "Section", "\u0E04\u0E27\u0E32\u0E21\u0E2A\u0E39\u0E07", "\u0E19\u0E49\u0E33\u0E2B\u0E19\u0E31\u0E01"}));
+		comboBox.setBounds(10, 11, 103, 20);
+		frame.getContentPane().add(comboBox);
+		
+		textField_Search = new JTextField();
+		textField_Search.addKeyListener(new KeyAdapter() {
+			public void keyPressed(KeyEvent k) {
+				if (k.getKeyCode() == 10) {
+					//btnSearch.doClick();
+					}
+			}
+		});
+		textField_Search.setBounds(126, 11, 116, 20);
+		frame.getContentPane().add(textField_Search);
+		textField_Search.setColumns(10);
+		
+		JLabel label = new JLabel("\u0E23\u0E2B\u0E31\u0E2A\u0E19\u0E31\u0E01\u0E28\u0E36\u0E01\u0E29\u0E32");
+		label.setFont(new Font("Tahoma", Font.BOLD, 12));
+		label.setBounds(49, 67, 84, 14);
+		frame.getContentPane().add(label);
+		
+		JLabel label_7 = new JLabel("0/0");
+		label_7.setBounds(166, 286, 46, 14);
+		frame.getContentPane().add(label_7);
+		
+		JLabel label_1 = new JLabel("\u0E0A\u0E37\u0E48\u0E2D");
+		label_1.setFont(new Font("Tahoma", Font.BOLD, 12));
+		label_1.setBounds(96, 92, 135, 14);
+		frame.getContentPane().add(label_1);
+		
+		JLabel lblNewLabel = new JLabel("\u0E19\u0E32\u0E21\u0E2A\u0E01\u0E38\u0E25");
+		lblNewLabel.setFont(new Font("Tahoma", Font.BOLD, 12));
+		lblNewLabel.setBounds(73, 120, 60, 14);
+		frame.getContentPane().add(lblNewLabel);
+		
+		JLabel label_2 = new JLabel("\u0E40\u0E1E\u0E28");
+		label_2.setFont(new Font("Tahoma", Font.BOLD, 12));
+		label_2.setBounds(87, 148, 46, 14);
+		frame.getContentPane().add(label_2);
+		
+		tf_ID = new JTextField();
+		tf_ID.setBounds(126, 64, 116, 20);
+		frame.getContentPane().add(tf_ID);
+		tf_ID.setColumns(10);
+		
+		textField_Name = new JTextField();
+		textField_Name.setBounds(126, 92, 86, 20);
+		frame.getContentPane().add(textField_Name);
+		textField_Name.setColumns(10);
+		
+		textField_Sur = new JTextField();
+		textField_Sur.setBounds(126, 120, 86, 20);
+		frame.getContentPane().add(textField_Sur);
+		textField_Sur.setColumns(10);
+		
+		JComboBox comboBox_sex = new JComboBox();
+		comboBox_sex.setFont(new Font("Tahoma", Font.BOLD, 12));
+		comboBox_sex.setModel(new DefaultComboBoxModel(new String[] {"\u0E0A\u0E32\u0E22", "\u0E2B\u0E0D\u0E34\u0E07"}));
+		comboBox_sex.setBounds(126, 145, 60, 20);
+		frame.getContentPane().add(comboBox_sex);
+		
+		JCheckBox checkBox = new JCheckBox("\u0E40\u0E02\u0E49\u0E32\u0E23\u0E48\u0E27\u0E21\u0E04\u0E48\u0E32\u0E22\u0E04\u0E38\u0E13\u0E18\u0E23\u0E23\u0E21\u0E41\u0E25\u0E30\u0E08\u0E23\u0E34\u0E22\u0E18\u0E23\u0E23\u0E21\u0E41\u0E25\u0E49\u0E27");
+		checkBox.setFont(new Font("Tahoma", Font.BOLD, 12));
+		checkBox.setBounds(123, 169, 228, 23);
+		frame.getContentPane().add(checkBox);
+		
+		JRadioButton radioButton = new JRadioButton("\u0E20\u0E32\u0E04\u0E1B\u0E01\u0E15\u0E34");
+		radioButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				Sec ="Normal";
+			}
+		});
+		radioButton.setFont(new Font("Tahoma", Font.BOLD, 12));
+		radioButton.setBounds(126, 195, 84, 23);
+		frame.getContentPane().add(radioButton);
+		
+		JRadioButton radioButton_1 = new JRadioButton("\u0E20\u0E32\u0E04\u0E1E\u0E34\u0E40\u0E28\u0E29");
+		radioButton_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				Sec ="Special";
+			}
+		});
+		radioButton_1.setFont(new Font("Tahoma", Font.BOLD, 12));
+		radioButton_1.setBounds(209, 195, 109, 23);
+		frame.getContentPane().add(radioButton_1);
+		radioButton_1.setActionCommand("Special");
+		radioButton.setActionCommand("Normal");
+			final ButtonGroup group = new ButtonGroup();
+			group.add(radioButton);
+			group.add(radioButton_1);
+		
+		JLabel label_3 = new JLabel("\u0E2A\u0E48\u0E27\u0E19\u0E2A\u0E39\u0E07");
+		label_3.setFont(new Font("Tahoma", Font.BOLD, 12));
+		label_3.setBounds(82, 221, 84, 14);
+		frame.getContentPane().add(label_3);
+		
+		textField_H = new JTextField();
+		textField_H.setBounds(126, 218, 86, 20);
+		frame.getContentPane().add(textField_H);
+		textField_H.setColumns(10);
+		
+		JLabel label_4 = new JLabel("\u0E40\u0E0B\u0E19\u0E15\u0E34\u0E40\u0E21\u0E15\u0E23");
+		label_4.setFont(new Font("Tahoma", Font.BOLD, 12));
+		label_4.setBounds(221, 221, 65, 14);
+		frame.getContentPane().add(label_4);
+		
+		textField_W = new JTextField();
+		textField_W.setBounds(126, 246, 86, 20);
+		frame.getContentPane().add(textField_W);
+		textField_W.setColumns(10);
+		
+		JLabel label_5 = new JLabel("\u0E19\u0E49\u0E33\u0E2B\u0E19\u0E31\u0E01");
+		label_5.setFont(new Font("Tahoma", Font.BOLD, 12));
+		label_5.setBounds(79, 249, 103, 14);
+		frame.getContentPane().add(label_5);
+		
+		JLabel label_6 = new JLabel("\u0E01\u0E34\u0E42\u0E25\u0E01\u0E23\u0E31\u0E21");
+		label_6.setFont(new Font("Tahoma", Font.BOLD, 12));
+		label_6.setBounds(221, 249, 70, 14);
+		frame.getContentPane().add(label_6);
+		
+		JButton btnNewButton_1 = new JButton("|<");
+		btnNewButton_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					if (rs.first()) {
+						tf_ID.setText(rs.getString("STD_ID"));
+						textField_Name.setText(rs.getString("Name"));
+						textField_Sur.setText(rs.getString("Surname"));
+						checkBox.setSelected(rs.getBoolean("Temple"));
+						if (rs.getString("Gender").equals("Male")){
+							comboBox_sex.setSelectedIndex(0);
+						} 
+						else{
+							comboBox_sex.setSelectedIndex(1);
+						}
+						if (rs.getString("Section").equals("Normal")){
+							radioButton.setSelected(true);
+						} 
+						else {
+							radioButton_1.setSelected(true);
+						}
+						tf_ID.setText(rs.getString("STD_ID"));
+						textField_Name.setText(rs.getString("Name"));
+						textField_Sur.setText(rs.getString("Surname"));
+						checkBox.setSelected(rs.getBoolean("Temple"));
+						if (rs.getString("Gender").equals("Male")){
+							comboBox_sex.setSelectedIndex(0);
+						} 
+						else {
+							comboBox_sex.setSelectedIndex(1);
+						}
+						if (rs.getString("Section").equals("Normal"))
+						{
+							radioButton.setSelected(true);
+						} 
+						else {
+							radioButton_1.setSelected(true);
+						}
+						textField_H.setText(rs.getString("Height"));
+						textField_W.setText(rs.getString("Weight"));
+						}
+					label_7.setText(Integer.toString(rs.getRow()) + "/" + Integer.toString(Rowsize));
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
+		btnNewButton_1.setBounds(40, 274, 46, 38);
+		frame.getContentPane().add(btnNewButton_1);
+		
+		JButton btnNewButton_2 = new JButton("<");
+		btnNewButton_2.setBounds(96, 274, 46, 38);
+		frame.getContentPane().add(btnNewButton_2);
+		btnNewButton_2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					if (rs.previous()) {
+						tf_ID.setText(rs.getString("STD_ID"));
+						textField_Name.setText(rs.getString("Name"));
+						textField_Sur.setText(rs.getString("Surname"));
+						checkBox.setSelected(rs.getBoolean("Temple"));
+						if (rs.getString("Gender").equals("Male")){
+							comboBox_sex.setSelectedIndex(0);
+						} 
+						else{
+							comboBox_sex.setSelectedIndex(1);
+						}
+						if (rs.getString("Section").equals("Normal")){
+							radioButton.setSelected(true);
+						} 
+						else {
+							radioButton_1.setSelected(true);
+						}
+						tf_ID.setText(rs.getString("STD_ID"));
+						textField_Name.setText(rs.getString("Name"));
+						textField_Sur.setText(rs.getString("Surname"));
+						checkBox.setSelected(rs.getBoolean("Temple"));
+						if (rs.getString("Gender").equals("Male")){
+							comboBox_sex.setSelectedIndex(0);
+						} 
+						else {
+							comboBox_sex.setSelectedIndex(1);
+						}
+						if (rs.getString("Section").equals("Normal"))
+						{
+							radioButton.setSelected(true);
+						} 
+						else {
+							radioButton_1.setSelected(true);
+						}
+						textField_H.setText(rs.getString("Height"));
+						textField_W.setText(rs.getString("Weight"));
+						}
+					else {
+						if (rs.first()) {
+							tf_ID.setText(rs.getString("STD_ID"));
+							textField_Name.setText(rs.getString("Name"));
+							textField_Sur.setText(rs.getString("Surname"));
+							checkBox.setSelected(rs.getBoolean("Temple"));
+							if (rs.getString("Gender").equals("Male")){
+								comboBox_sex.setSelectedIndex(0);
+							} 
+							else{
+								comboBox_sex.setSelectedIndex(1);
+							}
+							if (rs.getString("Section").equals("Normal")){
+								radioButton.setSelected(true);
+							} 
+							else {
+								radioButton_1.setSelected(true);
+							}
+							tf_ID.setText(rs.getString("STD_ID"));
+							textField_Name.setText(rs.getString("Name"));
+							textField_Sur.setText(rs.getString("Surname"));
+							checkBox.setSelected(rs.getBoolean("Temple"));
+							if (rs.getString("Gender").equals("Male")){
+								comboBox_sex.setSelectedIndex(0);
+							} 
+							else {
+								comboBox_sex.setSelectedIndex(1);
+							}
+							if (rs.getString("Section").equals("Normal"))
+							{
+								radioButton.setSelected(true);
+							} 
+							else {
+								radioButton_1.setSelected(true);
+							}
+							textField_H.setText(rs.getString("Height"));
+							textField_W.setText(rs.getString("Weight"));
+							}
+					}
+					label_7.setText(Integer.toString(rs.getRow()) + "/" + Integer.toString(Rowsize));
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
+		
+		JButton btnNewButton_3 = new JButton(">");
+		btnNewButton_3.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+					try {
+						if (rs.next()) {
+							tf_ID.setText(rs.getString("STD_ID"));
+							textField_Name.setText(rs.getString("Name"));
+							textField_Sur.setText(rs.getString("Surname"));
+							checkBox.setSelected(rs.getBoolean("Temple"));
+							if (rs.getString("Gender").equals("Male")){
+								comboBox_sex.setSelectedIndex(0);
+							} 
+							else{
+								comboBox_sex.setSelectedIndex(1);
+							}
+							if (rs.getString("Section").equals("Normal")){
+								radioButton.setSelected(true);
+							} 
+							else {
+								radioButton_1.setSelected(true);
+							}
+							tf_ID.setText(rs.getString("STD_ID"));
+							textField_Name.setText(rs.getString("Name"));
+							textField_Sur.setText(rs.getString("Surname"));
+							checkBox.setSelected(rs.getBoolean("Temple"));
+							if (rs.getString("Gender").equals("Male")){
+								comboBox_sex.setSelectedIndex(0);
+							} 
+							else {
+								comboBox_sex.setSelectedIndex(1);
+							}
+							if (rs.getString("Section").equals("Normal"))
+							{
+								radioButton.setSelected(true);
+							} 
+							else {
+								radioButton_1.setSelected(true);
+							}
+							textField_H.setText(rs.getString("Height"));
+							textField_W.setText(rs.getString("Weight"));
+							}
+						else {
+							if (rs.last()) {
+								tf_ID.setText(rs.getString("STD_ID"));
+								textField_Name.setText(rs.getString("Name"));
+								textField_Sur.setText(rs.getString("Surname"));
+								checkBox.setSelected(rs.getBoolean("Temple"));
+								if (rs.getString("Gender").equals("Male")){
+									comboBox_sex.setSelectedIndex(0);
+								} 
+								else{
+									comboBox_sex.setSelectedIndex(1);
+								}
+								if (rs.getString("Section").equals("Normal")){
+									radioButton.setSelected(true);
+								} 
+								else {
+									radioButton_1.setSelected(true);
+								}
+								tf_ID.setText(rs.getString("STD_ID"));
+								textField_Name.setText(rs.getString("Name"));
+								textField_Sur.setText(rs.getString("Surname"));
+								checkBox.setSelected(rs.getBoolean("Temple"));
+								if (rs.getString("Gender").equals("Male")){
+									comboBox_sex.setSelectedIndex(0);
+								} 
+								else {
+									comboBox_sex.setSelectedIndex(1);
+								}
+								if (rs.getString("Section").equals("Normal"))
+								{
+									radioButton.setSelected(true);
+								} 
+								else {
+									radioButton_1.setSelected(true);
+								}
+								textField_H.setText(rs.getString("Height"));
+								textField_W.setText(rs.getString("Weight"));
+								}
+						}
+					    
+						label_7.setText(Integer.toString(rs.getRow()) + "/" + Integer.toString(Rowsize));
+					} catch (SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}
+		});
+		btnNewButton_3.setBounds(204, 275, 48, 36);
+		frame.getContentPane().add(btnNewButton_3);
+		
+		JButton button = new JButton(">|");
+		button.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					if (rs.last()) {
+						tf_ID.setText(rs.getString("STD_ID"));
+						textField_Name.setText(rs.getString("Name"));
+						textField_Sur.setText(rs.getString("Surname"));
+						checkBox.setSelected(rs.getBoolean("Temple"));
+						if (rs.getString("Gender").equals("Male")){
+							comboBox_sex.setSelectedIndex(0);
+						} 
+						else{
+							comboBox_sex.setSelectedIndex(1);
+						}
+						if (rs.getString("Section").equals("Normal")){
+							radioButton.setSelected(true);
+						} 
+						else {
+							radioButton_1.setSelected(true);
+						}
+						tf_ID.setText(rs.getString("STD_ID"));
+						textField_Name.setText(rs.getString("Name"));
+						textField_Sur.setText(rs.getString("Surname"));
+						checkBox.setSelected(rs.getBoolean("Temple"));
+						if (rs.getString("Gender").equals("Male")){
+							comboBox_sex.setSelectedIndex(0);
+						} 
+						else {
+							comboBox_sex.setSelectedIndex(1);
+						}
+						if (rs.getString("Section").equals("Normal"))
+						{
+							radioButton.setSelected(true);
+						} 
+						else {
+							radioButton_1.setSelected(true);
+						}
+						textField_H.setText(rs.getString("Height"));
+						textField_W.setText(rs.getString("Weight"));
+						}					
+					label_7.setText(Integer.toString(rs.getRow()) + "/" + Integer.toString(Rowsize));
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
+		button.setBounds(263, 275, 48, 36);
+		frame.getContentPane().add(button);
+		
+		JButton btnAdd = new JButton("");
+		btnAdd.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					Statement stment = conn.createStatement();
+					String sql = "INSERT INTO customer "
+							+ "(STD_ID,Name,Surname,Gender,Temple,Section,Height,Weight) "
+							+ "VALUES ('" + tf_ID.getText() + "','"
+							+ textField_Name.getText() + "','"
+							+ textField_Sur.getText() + "'" + ",'"
+							+ comboBox_sex.getToolTipText() + "','"
+							+ checkBox.isSelected() + "','"
+							+ Sec + "','"
+							+ textField_H.getText() + "','"
+							+ textField_W.getText() +
+							"') ";
+	
+					ResultSet rs =  stment.executeQuery(qry);
+				if (rs.next()){
+					tf_ID.setText("รหัส :"+rs.getString("STD_ID")+" ชื่อ"+
+					rs.getString("Name")+" "+rs.getString("Surname"));
+					} 
+
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}					
+			}			
+		});
+		btnAdd.setIcon(new ImageIcon("E:\\Programming\\Java\\Lap6\\aaaaaaaaa.png"));
+		btnAdd.setBounds(378, 67, 65, 57);
+		frame.getContentPane().add(btnAdd);
+		
+		JButton btnEdit = new JButton("");
+		btnEdit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+			}
+		});
+		btnEdit.setIcon(new ImageIcon("E:\\Programming\\Java\\Lap6\\eeeeeeee.png"));
+		btnEdit.setBounds(378, 135, 65, 57);
+		frame.getContentPane().add(btnEdit);
+		
+		JButton btnSubt = new JButton("");
+		btnSubt.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+			}
+		});
+		btnSubt.setIcon(new ImageIcon("E:\\Programming\\Java\\Lap6\\sssss.png"));
+		btnSubt.setBounds(378, 201, 65, 57);
+		frame.getContentPane().add(btnSubt);
+		
+		JButton buttonNO = new JButton("");
+		buttonNO.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+			}
+		});
+		buttonNO.setIcon(new ImageIcon("E:\\Programming\\Java\\Lap6\\xxxxx.png"));
+		buttonNO.setBounds(214, 323, 65, 63);
+		frame.getContentPane().add(buttonNO);
+		
+		JButton btnOK = new JButton("");
+		btnOK.setIcon(new ImageIcon("E:\\Programming\\Java\\Lap6\\kkkkk.png"));
+		btnOK.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+			}
+		});
+		
+		JButton btnSearch = new JButton("");
+		btnSearch.setForeground(Color.BLACK);
+		btnSearch.setIcon(new ImageIcon("E:\\Programming\\Java\\Lap6\\weqweqweqe.png"));
+		btnSearch.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					conn = DriverManager.getConnection("jdbc:ucanaccess://‪E:\\Programming\\Java\\Lap6\\Database1.mdb");
+					String qry = null;
+					switch (comboBox.getSelectedIndex()) {
+					case 0:
+					qry = "SELECT * FROM student";
+					break;
+					case 1:
+					qry = "SELECT * FROM student where STD_ID = '" + textField_Search.getText() + "'";
+					break;
+					case 2:
+					qry = "SELECT * FROM student where Name = '" + textField_Search.getText() + "'";
+					break;
+					case 3:
+					qry = "SELECT * FROM student where Surname = '" + textField_Search.getText() + "'";
+					break;
+					case 4:
+					qry = "SELECT * FROM student where Gender = '" + textField_Search.getText() + "'";
+					break;
+					}
+					stment = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
+							ResultSet.CONCUR_UPDATABLE);
+					rs = stment.executeQuery(qry);
+					if (rs.last()) {
+						  Rowsize = rs.getRow();
+				          rs.beforeFirst(); 
+				    }
+					if (rs.next()) {
+						tf_ID.setText(rs.getString("STD_ID"));
+						textField_Name.setText(rs.getString("Name"));
+						textField_Sur.setText(rs.getString("Surname"));
+						checkBox.setSelected(rs.getBoolean("Temple"));
+						if (rs.getString("Gender").equals("Male")) {
+						comboBox_sex.setSelectedIndex(0);
+						} else {
+						comboBox_sex.setSelectedIndex(1);
+						}
+						if (rs.getString("Section").equals("Normal"))
+						{
+							radioButton.setSelected(true);
+						} else 
+						{
+							radioButton_1.setSelected(true);
+						}
+						textField_H.setText(rs.getString("Height"));
+						textField_W.setText(rs.getString("Weight"));
+					}
+					      	
+					label_7.setText(Integer.toString(rs.getRow()) + "/" + Integer.toString(Rowsize));
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+					
+			}
+		});
+		btnSearch.setBounds(265, 12, 46, 44);
+		frame.getContentPane().add(btnSearch);
+
+		
+		btnOK.setBounds(110, 324, 65, 63);
+		frame.getContentPane().add(btnOK);
+	}
+}
